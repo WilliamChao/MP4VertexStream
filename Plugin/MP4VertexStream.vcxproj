@@ -27,10 +27,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Encoder\vsAACEncoder.cpp" />
-    <ClCompile Include="Encoder\vsH264Encoder.cpp" />
-    <ClCompile Include="Encoder\vsMP4File.cpp" />
-    <ClCompile Include="Encoder\vsMP4Muxer.cpp" />
+    <ClCompile Include="Encoder\AACEncoder.cpp" />
+    <ClCompile Include="Encoder\H264Encoder.cpp" />
+    <ClCompile Include="Encoder\MP4File.cpp" />
+    <ClCompile Include="Encoder\MP4Muxer.cpp" />
     <ClCompile Include="Foundation\ThreadPool.cpp" />
     <ClCompile Include="GraphicsDevice\GraphicsDevice.cpp" />
     <ClCompile Include="GraphicsDevice\GraphicsDeviceD3D11.cpp" />
@@ -49,10 +49,10 @@
     <ClCompile Include="vsEncodeContext.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Encoder\vsAACEncoder.h" />
-    <ClInclude Include="Encoder\vsH264Encoder.h" />
-    <ClInclude Include="Encoder\vsMP4File.h" />
-    <ClInclude Include="Encoder\vsMP4Muxer.h" />
+    <ClInclude Include="Encoder\AACEncoder.h" />
+    <ClInclude Include="Encoder\H264Encoder.h" />
+    <ClInclude Include="Encoder\MP4File.h" />
+    <ClInclude Include="Encoder\MP4Muxer.h" />
     <ClInclude Include="Foundation\Foundation.h" />
     <ClInclude Include="Foundation\ThreadPool.h" />
     <ClInclude Include="GraphicsDevice\GraphicsDevice.h" />

@@ -20,16 +20,16 @@
     </ClCompile>
     <ClCompile Include="vsDecodeContext.cpp" />
     <ClCompile Include="vsEncodeContext.cpp" />
-    <ClCompile Include="Encoder\vsMP4Muxer.cpp">
+    <ClCompile Include="Encoder\MP4File.cpp">
       <Filter>Encoder</Filter>
     </ClCompile>
-    <ClCompile Include="Encoder\vsAACEncoder.cpp">
+    <ClCompile Include="Encoder\MP4Muxer.cpp">
       <Filter>Encoder</Filter>
     </ClCompile>
-    <ClCompile Include="Encoder\vsH264Encoder.cpp">
+    <ClCompile Include="Encoder\AACEncoder.cpp">
       <Filter>Encoder</Filter>
     </ClCompile>
-    <ClCompile Include="Encoder\vsMP4File.cpp">
+    <ClCompile Include="Encoder\H264Encoder.cpp">
       <Filter>Encoder</Filter>
     </ClCompile>
   </ItemGroup>
@@ -47,16 +47,16 @@
     </ClInclude>
     <ClInclude Include="vsEncodeContext.h" />
     <ClInclude Include="vsDecodeContext.h" />
-    <ClInclude Include="Encoder\vsMP4File.h">
+    <ClInclude Include="Encoder\MP4File.h">
       <Filter>Encoder</Filter>
     </ClInclude>
-    <ClInclude Include="Encoder\vsMP4Muxer.h">
+    <ClInclude Include="Encoder\MP4Muxer.h">
       <Filter>Encoder</Filter>
     </ClInclude>
-    <ClInclude Include="Encoder\vsAACEncoder.h">
+    <ClInclude Include="Encoder\AACEncoder.h">
       <Filter>Encoder</Filter>
     </ClInclude>
-    <ClInclude Include="Encoder\vsH264Encoder.h">
+    <ClInclude Include="Encoder\H264Encoder.h">
       <Filter>Encoder</Filter>
     </ClInclude>
   </ItemGroup>

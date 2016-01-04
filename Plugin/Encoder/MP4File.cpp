@@ -5,16 +5,16 @@
 #include "Foundation.h"
 #include "ThreadPool.h"
 #include "GraphicsDevice/GraphicsDevice.h"
-#include "vsMP4File.h"
-#include "vsH264Encoder.h"
-#include "vsAACEncoder.h"
-#include "vsMP4Muxer.h"
+#include "MP4File.h"
+#include "H264Encoder.h"
+#include "AACEncoder.h"
+#include "MP4Muxer.h"
 #ifdef fcWindows
 #pragma comment(lib, "yuv.lib")
 #endif
 
 
-class vsMP4Context : public vsIMP4EncodeContext
+class vsMP4Context : public IMP4EncodeContext
 {
 public:
     struct H264FrameData
@@ -86,9 +86,9 @@ private:
     int m_video_frame;
     int m_audio_frame;
 
-    std::unique_ptr<vsH264Encoder> m_h264_encoder;
-    std::unique_ptr<vsAACEncoder> m_aac_encoder;
-    std::unique_ptr<vsMP4Muxer> m_muxer;
+    std::unique_ptr<H264Encoder> m_h264_encoder;
+    std::unique_ptr<AACEncoder> m_aac_encoder;
+    std::unique_ptr<MP4Muxer> m_muxer;
 
     std::atomic<int> m_video_active_task_count;
     std::thread m_video_worker;
@@ -132,7 +132,7 @@ vsMP4Context::vsMP4Context(vsEncodeConfig &conf, IGraphicsDevice *dev)
     }
 
     resetEncoders();
-    m_muxer.reset(new vsMP4Muxer());
+    m_muxer.reset(new MP4Muxer());
 
     // run working thread
     if (m_conf.video) {
@@ -164,12 +164,12 @@ void vsMP4Context::resetEncoders()
 
     m_h264_encoder.reset();
     if (m_conf.video) {
-        m_h264_encoder.reset(new vsH264Encoder(m_conf.video_width, m_conf.video_height, m_conf.video_framerate, m_conf.video_bitrate));
+        m_h264_encoder.reset(new H264Encoder(m_conf.video_width, m_conf.video_height, m_conf.video_framerate, m_conf.video_bitrate));
     }
 
     m_aac_encoder.reset();
     if (m_conf.audio) {
-        m_aac_encoder.reset(new vsAACEncoder(m_conf.audio_sampling_rate, m_conf.audio_num_channels, m_conf.audio_bitrate));
+        m_aac_encoder.reset(new AACEncoder(m_conf.audio_sampling_rate, m_conf.audio_num_channels, m_conf.audio_bitrate));
     }
 }
 
@@ -382,7 +382,7 @@ void vsMP4Context::write(std::ostream &os)
     sprintf(tmp_aac_filename, "%llu.aac", now);
     sprintf(tmp_mp4_filename, "%llu.mp4", now);
 
-    vsMP4Muxer::Params params;
+    MP4Muxer::Params params;
     params.frame_rate = m_conf.video_framerate;
     params.out_mp4_path = tmp_mp4_filename;
     if(m_conf.video) {
@@ -441,9 +441,9 @@ int vsMP4Context::writeMemory(void *buf)
 }
 
 
-vsCLinkage vsExport vsIMP4EncodeContext* vsMP4EncodeCreateContextImpl(vsEncodeConfig &conf, IGraphicsDevice *dev)
+vsCLinkage vsExport IMP4EncodeContext* vsMP4EncodeCreateContextImpl(vsEncodeConfig &conf, IGraphicsDevice *dev)
 {
-    if (vsH264Encoder::loadModule()) {
+    if (H264Encoder::loadModule()) {
         return new vsMP4Context(conf, dev);
     }
     return nullptr;

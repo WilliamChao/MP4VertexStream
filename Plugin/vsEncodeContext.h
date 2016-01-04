@@ -1,7 +1,7 @@
 #ifndef vsEncodeContext_h
 #define vsEncodeContext_h
 
-class vsIMP4EncodeContext;
+class IMP4EncodeContext;
 
 
 class vsEncodeContext
@@ -15,7 +15,7 @@ public:
     void release();
 
     void beginFrame();
-    void addData(void *data, vsColorSpace format = vsColorSpace_RGBA);
+    void addData(const void *data, int num_elements, vsDataFormat format);
     void endFrame();
 
     bool writeFile(const char *path);
@@ -23,8 +23,9 @@ public:
 
 private:
     vsEncodeConfig m_config;
-    vsIMP4EncodeContext *m_mp4;
+    IMP4EncodeContext *m_mp4;
     std::vector<char> m_buf;
+    int m_buf_pos;
 };
 
 #endif // vsEncodeContext_h

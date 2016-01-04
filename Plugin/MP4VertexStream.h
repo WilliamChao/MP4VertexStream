@@ -62,25 +62,25 @@ enum vsColorSpace
     vsColorSpace_I420,
 };
 
-enum vsPixelFormat
+enum vsDataFormat
 {
-    vsPixelFormat_Unknown,
-    vsPixelFormat_RGBA8,
-    vsPixelFormat_RGB8,
-    vsPixelFormat_RG8,
-    vsPixelFormat_R8,
-    vsPixelFormat_RGBAHalf,
-    vsPixelFormat_RGBHalf,
-    vsPixelFormat_RGHalf,
-    vsPixelFormat_RHalf,
-    vsPixelFormat_RGBAFloat,
-    vsPixelFormat_RGBFloat,
-    vsPixelFormat_RGFloat,
-    vsPixelFormat_RFloat,
-    vsPixelFormat_RGBAInt,
-    vsPixelFormat_RGBInt,
-    vsPixelFormat_RGInt,
-    vsPixelFormat_RInt,
+    vsDataFormat_Unknown,
+    vsDataFormat_RGBA8,
+    vsDataFormat_RGB8,
+    vsDataFormat_RG8,
+    vsDataFormat_R8,
+    vsDataFormat_RGBAHalf,
+    vsDataFormat_RGBHalf,
+    vsDataFormat_RGHalf,
+    vsDataFormat_RHalf,
+    vsDataFormat_RGBAFloat,
+    vsDataFormat_RGBFloat,
+    vsDataFormat_RGFloat,
+    vsDataFormat_RFloat,
+    vsDataFormat_RGBAInt,
+    vsDataFormat_RGBInt,
+    vsDataFormat_RGInt,
+    vsDataFormat_RInt,
 };
 
 enum fcETextureFormat
@@ -140,7 +140,7 @@ struct vsDecodeConfig
 vsCLinkage vsExport vsEncodeContext*    vsEncodeCreateContext(vsEncodeConfig *conf);
 vsCLinkage vsExport void                vsEncodeDestroyContext(vsEncodeContext *ctx);
 vsCLinkage vsExport void                vsEncodeBeginFrame(vsEncodeContext *ctx);
-vsCLinkage vsExport void                vsEncodeAddData(vsEncodeContext *ctx, void *data, vsColorSpace format = vsColorSpace_RGBA);
+vsCLinkage vsExport void                vsEncodeAddData(vsEncodeContext *ctx, void *data, int num_elements, vsDataFormat format);
 vsCLinkage vsExport void                vsEncodeEndFrame(vsEncodeContext *ctx);
 vsCLinkage vsExport bool                vsEncodeWriteFile(vsEncodeContext *ctx, const char *path);
 vsCLinkage vsExport int                 vsEncodeWriteMemory(vsEncodeContext *ctx, void *buf);
@@ -148,9 +148,12 @@ vsCLinkage vsExport int                 vsEncodeWriteMemory(vsEncodeContext *ctx
 vsCLinkage vsExport vsDecodeContext*    vsDecodeCreateContext(vsDecodeConfig *conf);
 vsCLinkage vsExport void                vsDecodeDestroyContext(vsDecodeContext *ctx);
 vsCLinkage vsExport void                vsDecodeBeginFrame(vsDecodeContext *ctx);
-vsCLinkage vsExport void                vsDecodeGetData(vsDecodeContext *ctx, void *data, vsColorSpace format = vsColorSpace_RGBA);
+vsCLinkage vsExport void                vsDecodeGetData(vsDecodeContext *ctx, void *data, vsDataFormat format);
 vsCLinkage vsExport void                vsDecodeEndFrame(vsDecodeContext *ctx);
 vsCLinkage vsExport bool                vsDecodeReadFile(vsDecodeContext *ctx, const char *path);
 vsCLinkage vsExport int                 vsDecodeReadMemory(vsDecodeContext *ctx, void *buf);
+
+vsCLinkage vsExport int                 vsGetDataSize(vsDataFormat fmt);
+vsCLinkage vsExport void                vsConvertData(void *out_buf, vsDataFormat out_fmt, const void *in_buf, vsDataFormat in_fmt);
 
 #endif // FrameCapturer_h

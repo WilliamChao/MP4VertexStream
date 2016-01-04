@@ -63,7 +63,7 @@ int main(int argc, char** argv)
     for (int i = 0; i < 300; ++i) {
         CreateTestVideoData(&video_frame[0], Width, Height, i);
         vsEncodeBeginFrame(ctx);
-        vsEncodeAddData(ctx, &video_frame[0]);
+        vsEncodeAddData(ctx, &video_frame[0], Width * Height, vsDataFormat_RGBA8);
         vsEncodeEndFrame(ctx);
     }
     vsEncodeWriteFile(ctx, "out.mp4");

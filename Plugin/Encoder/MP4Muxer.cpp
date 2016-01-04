@@ -3,7 +3,7 @@
 #include "lsmash/lsmash.h"
 #include "lsmash/importer.h"
 #include "Foundation.h"
-#include "vsMP4Muxer.h"
+#include "MP4Muxer.h"
 
 
 #ifdef fcWindows
@@ -15,11 +15,11 @@
 
 
 
-vsMP4Muxer::vsMP4Muxer()
+MP4Muxer::MP4Muxer()
 {
 }
 
-vsMP4Muxer::~vsMP4Muxer()
+MP4Muxer::~MP4Muxer()
 {
 }
 
@@ -40,7 +40,7 @@ struct MP4TrackData
     MP4TrackData() { memset(this, 0, sizeof(*this)); }
 };
 
-bool vsMP4Muxer::mux(const Params &params)
+bool MP4Muxer::mux(const Params &params)
 {
     lsmash_root_t               *root;
     lsmash_file_parameters_t    mp4_stream;

@@ -1,10 +1,10 @@
-﻿#ifndef vsAACEncoder_h
-#define vsAACEncoder_h
+﻿#ifndef AACEncoder_h
+#define AACEncoder_h
 
 #include <string>
 
 
-class vsAACEncoder
+class AACEncoder
 {
 public:
     struct Result
@@ -18,8 +18,8 @@ public:
 
     static bool loadModule();
 
-    vsAACEncoder(int sampling_rate, int num_channels, int bitrate);
-    ~vsAACEncoder();
+    AACEncoder(int sampling_rate, int num_channels, int bitrate);
+    ~AACEncoder();
     operator bool() const;
     Result encode(const float *samples, int num_samples);
     const std::string& getHeader();
@@ -35,4 +35,4 @@ private:
 };
 
 
-#endif // vsAACEncoder_h
+#endif // AACEncoder_h

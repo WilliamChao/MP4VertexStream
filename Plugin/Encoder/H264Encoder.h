@@ -1,11 +1,11 @@
-﻿#ifndef vsMP4Encoder_h
-#define vsMP4Encoder_h
+﻿#ifndef MP4Encoder_h
+#define MP4Encoder_h
 
 #include <string>
 
 class ISVCEncoder;
 
-class vsH264Encoder
+class H264Encoder
 {
 public:
     enum FrameType
@@ -29,8 +29,8 @@ public:
 
     static bool loadModule();
 
-    vsH264Encoder(int width, int height, float frame_rate, int target_bitrate);
-    ~vsH264Encoder();
+    H264Encoder(int width, int height, float frame_rate, int target_bitrate);
+    ~H264Encoder();
     operator bool() const;
     Result encodeI420(const void *src_y, const void *src_u, const void *src_v);
 
@@ -41,4 +41,4 @@ private:
 };
 
 
-#endif // vsMP4Encoder_h
+#endif // MP4Encoder_h

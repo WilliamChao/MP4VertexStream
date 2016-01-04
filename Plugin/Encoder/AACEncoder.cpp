@@ -1,7 +1,7 @@
 ﻿#include "pch.h"
 #include <libfaac/faac.h>
 #include "Foundation.h"
-#include "vsAACEncoder.h"
+#include "AACEncoder.h"
 
 
 #if defined(fcWindows)
@@ -71,12 +71,12 @@ imp(faacEncClose)
 
 
 
-bool vsAACEncoder::loadModule()
+bool AACEncoder::loadModule()
 {
     return LoadFAACModule();
 }
 
-vsAACEncoder::vsAACEncoder(int sampling_rate, int num_channels, int bitrate)
+AACEncoder::AACEncoder(int sampling_rate, int num_channels, int bitrate)
     : m_handle(nullptr), m_num_read_samples(), m_output_size()
 {
     if (!loadModule()) { return; }
@@ -95,7 +95,7 @@ vsAACEncoder::vsAACEncoder(int sampling_rate, int num_channels, int bitrate)
     int ret = faacEncSetConfiguration_imp(m_handle, config);
 }
 
-vsAACEncoder::~vsAACEncoder()
+AACEncoder::~AACEncoder()
 {
     if (!loadModule()) { return; }
 
@@ -103,12 +103,12 @@ vsAACEncoder::~vsAACEncoder()
     m_handle = nullptr;
 }
 
-vsAACEncoder::operator bool() const
+AACEncoder::operator bool() const
 {
     return loadModule();
 }
 
-vsAACEncoder::Result vsAACEncoder::encode(const float *samples, int num_samples)
+AACEncoder::Result AACEncoder::encode(const float *samples, int num_samples)
 {
     if (!loadModule()) { return Result(); }
 
@@ -125,7 +125,7 @@ vsAACEncoder::Result vsAACEncoder::encode(const float *samples, int num_samples)
     return Result(&m_aac_buf[0], m_aac_buf.size());
 }
 
-const std::string& vsAACEncoder::getHeader()
+const std::string& AACEncoder::getHeader()
 {
     unsigned char *buf;
     unsigned long num_buf;

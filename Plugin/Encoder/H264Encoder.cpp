@@ -2,7 +2,7 @@
 #include <openh264/codec_api.h>
 #include <libyuv/libyuv.h>
 #include "Foundation.h"
-#include "vsH264Encoder.h"
+#include "H264Encoder.h"
 
 
 #ifdef fcWindows
@@ -45,12 +45,12 @@ static bool LoadOpenH264Module()
 
 
 
-bool vsH264Encoder::loadModule()
+bool H264Encoder::loadModule()
 {
     return LoadOpenH264Module();
 }
 
-vsH264Encoder::vsH264Encoder(int width, int height, float frame_rate, int target_bitrate)
+H264Encoder::H264Encoder(int width, int height, float frame_rate, int target_bitrate)
     : m_encoder(nullptr)
     , m_width(width)
     , m_height(height)
@@ -71,20 +71,20 @@ vsH264Encoder::vsH264Encoder(int width, int height, float frame_rate, int target
     int ret = m_encoder->Initialize(&param);
 }
 
-vsH264Encoder::~vsH264Encoder()
+H264Encoder::~H264Encoder()
 {
     if (g_mod_h264 == nullptr) { return; }
 
     WelsDestroySVCEncoder_imp(m_encoder);
 }
 
-vsH264Encoder::operator bool() const
+H264Encoder::operator bool() const
 {
     return m_encoder != nullptr;
 }
 
 
-vsH264Encoder::Result vsH264Encoder::encodeI420(const void *src_y, const void *src_u, const void *src_v)
+H264Encoder::Result H264Encoder::encodeI420(const void *src_y, const void *src_u, const void *src_v)
 {
     if (!m_encoder) { return Result(); }
 

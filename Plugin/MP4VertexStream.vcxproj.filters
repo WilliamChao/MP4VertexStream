@@ -2,18 +2,6 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
-    <ClCompile Include="Encoder\fcH264Encoder.cpp">
-      <Filter>Encoder</Filter>
-    </ClCompile>
-    <ClCompile Include="Encoder\fcMP4Muxer.cpp">
-      <Filter>Encoder</Filter>
-    </ClCompile>
-    <ClCompile Include="Encoder\fcMP4File.cpp">
-      <Filter>Encoder</Filter>
-    </ClCompile>
-    <ClCompile Include="Encoder\fcAACEncoder.cpp">
-      <Filter>Encoder</Filter>
-    </ClCompile>
     <ClCompile Include="MP4VertexStream.cpp" />
     <ClCompile Include="Foundation\ThreadPool.cpp">
       <Filter>Foundation</Filter>
@@ -30,21 +18,23 @@
     <ClCompile Include="GraphicsDevice\GraphicsDeviceD3D9.cpp">
       <Filter>GraphicsDevice</Filter>
     </ClCompile>
+    <ClCompile Include="vsDecodeContext.cpp" />
+    <ClCompile Include="vsEncodeContext.cpp" />
+    <ClCompile Include="Encoder\vsMP4Muxer.cpp">
+      <Filter>Encoder</Filter>
+    </ClCompile>
+    <ClCompile Include="Encoder\vsAACEncoder.cpp">
+      <Filter>Encoder</Filter>
+    </ClCompile>
+    <ClCompile Include="Encoder\vsH264Encoder.cpp">
+      <Filter>Encoder</Filter>
+    </ClCompile>
+    <ClCompile Include="Encoder\vsMP4File.cpp">
+      <Filter>Encoder</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
-    <ClInclude Include="Encoder\fcH264Encoder.h">
-      <Filter>Encoder</Filter>
-    </ClInclude>
-    <ClInclude Include="Encoder\fcMP4Muxer.h">
-      <Filter>Encoder</Filter>
-    </ClInclude>
-    <ClInclude Include="Encoder\fcMP4File.h">
-      <Filter>Encoder</Filter>
-    </ClInclude>
-    <ClInclude Include="Encoder\fcAACEncoder.h">
-      <Filter>Encoder</Filter>
-    </ClInclude>
     <ClInclude Include="MP4VertexStream.h" />
     <ClInclude Include="Foundation\ThreadPool.h">
       <Filter>Foundation</Filter>
@@ -54,6 +44,20 @@
     </ClInclude>
     <ClInclude Include="GraphicsDevice\GraphicsDevice.h">
       <Filter>GraphicsDevice</Filter>
+    </ClInclude>
+    <ClInclude Include="vsEncodeContext.h" />
+    <ClInclude Include="vsDecodeContext.h" />
+    <ClInclude Include="Encoder\vsMP4File.h">
+      <Filter>Encoder</Filter>
+    </ClInclude>
+    <ClInclude Include="Encoder\vsMP4Muxer.h">
+      <Filter>Encoder</Filter>
+    </ClInclude>
+    <ClInclude Include="Encoder\vsAACEncoder.h">
+      <Filter>Encoder</Filter>
+    </ClInclude>
+    <ClInclude Include="Encoder\vsH264Encoder.h">
+      <Filter>Encoder</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -2,11 +2,10 @@
 #define FrameCapturer_h
 
 //options:
-//#define fcSupportMP4
-//#define fcSupportOpenGL
-//#define fcSupportD3D9
-//#define fcSupportD3D11
-//#define fcWithTBB
+//#define vsSupportOpenGL
+//#define vsSupportD3D9
+//#define vsSupportD3D11
+//#define vsWithTBB
 
 
 #if defined(_WIN32)
@@ -53,8 +52,8 @@
 
 
 class IGraphicsDevice;
-class vsIEncodeContext;
-class vsIDecodeContext;
+class vsEncodeContext;
+class vsDecodeContext;
 
 enum vsColorSpace
 {
@@ -138,20 +137,20 @@ struct vsDecodeConfig
 
 };
 
-vsCLinkage vsExport vsIEncodeContext*   vsEncodeCreateContext(vsEncodeConfig *conf);
-vsCLinkage vsExport void                vsEncodeDestroyContext(vsIEncodeContext *ctx);
-vsCLinkage vsExport void                vsEncodeBeginFrame(vsIEncodeContext *ctx);
-vsCLinkage vsExport void                vsEncodeAddData(vsIEncodeContext *ctx, void *data, vsColorSpace format = vsColorSpace_RGBA);
-vsCLinkage vsExport void                vsEncodeEndFrame(vsIEncodeContext *ctx);
-vsCLinkage vsExport bool                vsEncodeWriteFile(vsIEncodeContext *ctx, const char *path);
-vsCLinkage vsExport int                 vsEncodeWriteMemory(vsIEncodeContext *ctx, void *buf);
+vsCLinkage vsExport vsEncodeContext*    vsEncodeCreateContext(vsEncodeConfig *conf);
+vsCLinkage vsExport void                vsEncodeDestroyContext(vsEncodeContext *ctx);
+vsCLinkage vsExport void                vsEncodeBeginFrame(vsEncodeContext *ctx);
+vsCLinkage vsExport void                vsEncodeAddData(vsEncodeContext *ctx, void *data, vsColorSpace format = vsColorSpace_RGBA);
+vsCLinkage vsExport void                vsEncodeEndFrame(vsEncodeContext *ctx);
+vsCLinkage vsExport bool                vsEncodeWriteFile(vsEncodeContext *ctx, const char *path);
+vsCLinkage vsExport int                 vsEncodeWriteMemory(vsEncodeContext *ctx, void *buf);
 
-vsCLinkage vsExport vsIDecodeContext*   vsDecodeCreateContext(vsDecodeConfig *conf);
-vsCLinkage vsExport void                vsDecodeDestroyContext(vsIDecodeContext *ctx);
-vsCLinkage vsExport void                vsDecodeBeginFrame(vsIDecodeContext *ctx);
-vsCLinkage vsExport void                vsDecodeGetData(vsIDecodeContext *ctx, void *data, vsColorSpace format = vsColorSpace_RGBA);
-vsCLinkage vsExport void                vsDecodeEndFrame(vsIDecodeContext *ctx);
-vsCLinkage vsExport bool                vsDecodeReadFile(vsIDecodeContext *ctx, const char *path);
-vsCLinkage vsExport int                 vsDecodeReadMemory(vsIDecodeContext *ctx, void *buf);
+vsCLinkage vsExport vsDecodeContext*    vsDecodeCreateContext(vsDecodeConfig *conf);
+vsCLinkage vsExport void                vsDecodeDestroyContext(vsDecodeContext *ctx);
+vsCLinkage vsExport void                vsDecodeBeginFrame(vsDecodeContext *ctx);
+vsCLinkage vsExport void                vsDecodeGetData(vsDecodeContext *ctx, void *data, vsColorSpace format = vsColorSpace_RGBA);
+vsCLinkage vsExport void                vsDecodeEndFrame(vsDecodeContext *ctx);
+vsCLinkage vsExport bool                vsDecodeReadFile(vsDecodeContext *ctx, const char *path);
+vsCLinkage vsExport int                 vsDecodeReadMemory(vsDecodeContext *ctx, void *buf);
 
 #endif // FrameCapturer_h

@@ -18,24 +18,24 @@ typedef IGraphicsDevice* (*fcGetGraphicsDeviceT)();
 vsCLinkage vsExport void UnitySetGraphicsDevice(void* device, int deviceType, int eventType)
 {
     if (eventType == kGfxDeviceEventInitialize) {
-#ifdef fcSupportD3D9
+#ifdef vsSupportD3D9
         if (deviceType == kGfxRendererD3D9)
         {
             g_the_graphics_device = fcCreateGraphicsDeviceD3D9(device);
         }
-#endif // fcSupportD3D9
-#ifdef fcSupportD3D11
+#endif // vsSupportD3D9
+#ifdef vsSupportD3D11
         if (deviceType == kGfxRendererD3D11)
         {
             g_the_graphics_device = fcCreateGraphicsDeviceD3D11(device);
         }
-#endif // fcSupportD3D11
-#ifdef fcSupportOpenGL
+#endif // vsSupportD3D11
+#ifdef vsSupportOpenGL
         if (deviceType == kGfxRendererOpenGL)
         {
             g_the_graphics_device = fcCreateGraphicsDeviceOpenGL(device);
         }
-#endif // fcSupportOpenGL
+#endif // vsSupportOpenGL
     }
 
     if (eventType == kGfxDeviceEventShutdown) {
@@ -49,21 +49,21 @@ vsCLinkage vsExport void UnityRenderEvent(int)
 }
 
 
-#ifdef fcSupportOpenGL
+#ifdef vsSupportOpenGL
 vsCLinkage vsExport void fcInitializeOpenGL()
 {
     UnitySetGraphicsDevice(nullptr, kGfxRendererOpenGL, kGfxDeviceEventInitialize);
 }
 #endif
 
-#ifdef fcSupportD3D9
+#ifdef vsSupportD3D9
 vsCLinkage vsExport void fcInitializeD3D9(void *device)
 {
     UnitySetGraphicsDevice(device, kGfxRendererD3D9, kGfxDeviceEventInitialize);
 }
 #endif
 
-#ifdef fcSupportD3D11
+#ifdef vsSupportD3D11
 vsCLinkage vsExport void fcInitializeD3D11(void *device)
 {
     UnitySetGraphicsDevice(device, kGfxRendererD3D11, kGfxDeviceEventInitialize);

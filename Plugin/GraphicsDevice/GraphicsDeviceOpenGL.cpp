@@ -1,7 +1,7 @@
 ﻿#include "pch.h"
 #include "MP4VertexStream.h"
 
-#ifdef fcSupportOpenGL
+#ifdef vsSupportOpenGL
 #include "Foundation.h"
 #include "GraphicsDevice.h"
 
@@ -104,4 +104,4 @@ bool GraphicsDeviceOpenGL::writeTexture(void *o_tex, int width, int height, fcET
     return true;
 }
 
-#endif // fcSupportOpenGL
+#endif // vsSupportOpenGL

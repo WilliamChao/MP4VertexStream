@@ -1,21 +1,20 @@
 ﻿#include "pch.h"
 #include "MP4VertexStream.h"
 
-#ifdef fcSupportMP4
 #include <libyuv/libyuv.h>
 #include "Foundation.h"
 #include "ThreadPool.h"
 #include "GraphicsDevice/GraphicsDevice.h"
-#include "fcMP4File.h"
-#include "fcH264Encoder.h"
-#include "fcAACEncoder.h"
-#include "fcMP4Muxer.h"
+#include "vsMP4File.h"
+#include "vsH264Encoder.h"
+#include "vsAACEncoder.h"
+#include "vsMP4Muxer.h"
 #ifdef fcWindows
 #pragma comment(lib, "yuv.lib")
 #endif
 
 
-class fcMP4Context : public vsIEncodeContext
+class vsMP4Context : public vsIMP4EncodeContext
 {
 public:
     struct H264FrameData
@@ -54,8 +53,8 @@ public:
     };
 
 public:
-    fcMP4Context(vsEncodeConfig &conf, IGraphicsDevice *dev);
-    ~fcMP4Context();
+    vsMP4Context(vsEncodeConfig &conf, IGraphicsDevice *dev);
+    ~vsMP4Context();
     void release() override;
 
     bool addVideoSamples(void *pixels, vsColorSpace cs) override;
@@ -87,9 +86,9 @@ private:
     int m_video_frame;
     int m_audio_frame;
 
-    std::unique_ptr<fcH264Encoder> m_h264_encoder;
-    std::unique_ptr<fcAACEncoder> m_aac_encoder;
-    std::unique_ptr<fcMP4Muxer> m_muxer;
+    std::unique_ptr<vsH264Encoder> m_h264_encoder;
+    std::unique_ptr<vsAACEncoder> m_aac_encoder;
+    std::unique_ptr<vsMP4Muxer> m_muxer;
 
     std::atomic<int> m_video_active_task_count;
     std::thread m_video_worker;
@@ -107,7 +106,7 @@ private:
 };
 
 
-fcMP4Context::fcMP4Context(vsEncodeConfig &conf, IGraphicsDevice *dev)
+vsMP4Context::vsMP4Context(vsEncodeConfig &conf, IGraphicsDevice *dev)
     : m_conf(conf)
     , m_dev(dev)
     , m_video_frame(0)
@@ -133,7 +132,7 @@ fcMP4Context::fcMP4Context(vsEncodeConfig &conf, IGraphicsDevice *dev)
     }
 
     resetEncoders();
-    m_muxer.reset(new fcMP4Muxer());
+    m_muxer.reset(new vsMP4Muxer());
 
     // run working thread
     if (m_conf.video) {
@@ -144,7 +143,7 @@ fcMP4Context::fcMP4Context(vsEncodeConfig &conf, IGraphicsDevice *dev)
     }
 }
 
-fcMP4Context::~fcMP4Context()
+vsMP4Context::~vsMP4Context()
 {
     // stop working thread
     m_stop = true;
@@ -159,22 +158,22 @@ fcMP4Context::~fcMP4Context()
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
 }
 
-void fcMP4Context::resetEncoders()
+void vsMP4Context::resetEncoders()
 {
     wait();
 
     m_h264_encoder.reset();
     if (m_conf.video) {
-        m_h264_encoder.reset(new fcH264Encoder(m_conf.video_width, m_conf.video_height, m_conf.video_framerate, m_conf.video_bitrate));
+        m_h264_encoder.reset(new vsH264Encoder(m_conf.video_width, m_conf.video_height, m_conf.video_framerate, m_conf.video_bitrate));
     }
 
     m_aac_encoder.reset();
     if (m_conf.audio) {
-        m_aac_encoder.reset(new fcAACEncoder(m_conf.audio_sampling_rate, m_conf.audio_num_channels, m_conf.audio_bitrate));
+        m_aac_encoder.reset(new vsAACEncoder(m_conf.audio_sampling_rate, m_conf.audio_num_channels, m_conf.audio_bitrate));
     }
 }
 
-void fcMP4Context::enqueueVideoTask(const std::function<void()> &f)
+void vsMP4Context::enqueueVideoTask(const std::function<void()> &f)
 {
     {
         std::unique_lock<std::mutex> lock(m_video_queue_mutex);
@@ -183,7 +182,7 @@ void fcMP4Context::enqueueVideoTask(const std::function<void()> &f)
     m_video_condition.notify_one();
 }
 
-void fcMP4Context::enqueueAudioTask(const std::function<void()> &f)
+void vsMP4Context::enqueueAudioTask(const std::function<void()> &f)
 {
     {
         std::unique_lock<std::mutex> lock(m_audio_queue_mutex);
@@ -192,7 +191,7 @@ void fcMP4Context::enqueueAudioTask(const std::function<void()> &f)
     m_audio_condition.notify_one();
 }
 
-void fcMP4Context::processVideoTasks()
+void vsMP4Context::processVideoTasks()
 {
     while (!m_stop)
     {
@@ -211,7 +210,7 @@ void fcMP4Context::processVideoTasks()
     }
 }
 
-void fcMP4Context::processAudioTasks()
+void vsMP4Context::processAudioTasks()
 {
     while (!m_stop)
     {
@@ -231,12 +230,12 @@ void fcMP4Context::processAudioTasks()
 }
 
 
-void fcMP4Context::release()
+void vsMP4Context::release()
 {
     delete this;
 }
 
-void fcMP4Context::scrape(bool updating)
+void vsMP4Context::scrape(bool updating)
 {
     // 最大容量か最大フレーム数が設定されている場合、それらを超過したフレームをここで切り捨てる。
     // 切り捨てるフレームがパレットを持っている場合パレットの移動も行う。
@@ -247,7 +246,7 @@ void fcMP4Context::scrape(bool updating)
     // todo
 }
 
-void fcMP4Context::addVideoFrameTask(H264FrameData &o_fdata, RawFrameData &raw, bool rgba2i420)
+void vsMP4Context::addVideoFrameTask(H264FrameData &o_fdata, RawFrameData &raw, bool rgba2i420)
 {
     // 必要であれば RGBA -> I420 変換
     int width = m_conf.video_width;
@@ -269,7 +268,7 @@ void fcMP4Context::addVideoFrameTask(H264FrameData &o_fdata, RawFrameData &raw, 
     o_fdata.data.assign((char*)ret.data, ret.size);
 }
 
-void fcMP4Context::wait()
+void vsMP4Context::wait()
 {
     while (m_video_active_task_count > 0)
     {
@@ -277,7 +276,7 @@ void fcMP4Context::wait()
     }
 }
 
-void fcMP4Context::waitOne()
+void vsMP4Context::waitOne()
 {
     // 実行中のタスクの数が上限に達している場合適当に待つ
     while (m_video_active_task_count >= m_conf.video_max_buffers)
@@ -286,7 +285,7 @@ void fcMP4Context::waitOne()
     }
 }
 
-bool fcMP4Context::addVideoSamples(void *pixels, vsColorSpace cs)
+bool vsMP4Context::addVideoSamples(void *pixels, vsColorSpace cs)
 {
     if (!m_h264_encoder) { return false; }
     waitOne();
@@ -322,7 +321,7 @@ bool fcMP4Context::addVideoSamples(void *pixels, vsColorSpace cs)
     return true;
 }
 
-bool fcMP4Context::addAudioSamples(const float *samples, int num_samples)
+bool vsMP4Context::addAudioSamples(const float *samples, int num_samples)
 {
     if (!m_aac_encoder) { return false; }
     waitOne();
@@ -345,7 +344,7 @@ bool fcMP4Context::addAudioSamples(const float *samples, int num_samples)
     return true;
 }
 
-void fcMP4Context::clearFrame()
+void vsMP4Context::clearFrame()
 {
     wait();
     m_video_frame = 0;
@@ -368,7 +367,7 @@ static inline void adjust_frame(int &begin_frame, int &end_frame, int max_frame)
 }
 
 
-void fcMP4Context::write(std::ostream &os)
+void vsMP4Context::write(std::ostream &os)
 {
     addAudioSamples(nullptr, 0); // flush
     wait();
@@ -383,7 +382,7 @@ void fcMP4Context::write(std::ostream &os)
     sprintf(tmp_aac_filename, "%llu.aac", now);
     sprintf(tmp_mp4_filename, "%llu.mp4", now);
 
-    fcMP4Muxer::Params params;
+    vsMP4Muxer::Params params;
     params.frame_rate = m_conf.video_framerate;
     params.out_mp4_path = tmp_mp4_filename;
     if(m_conf.video) {
@@ -422,7 +421,7 @@ void fcMP4Context::write(std::ostream &os)
 #endif // fcMaster
 }
 
-bool fcMP4Context::writeFile(const char *path)
+bool vsMP4Context::writeFile(const char *path)
 {
     std::ofstream os(path, std::ios::binary);
     if (!os) { return false; }
@@ -431,7 +430,7 @@ bool fcMP4Context::writeFile(const char *path)
     return true;
 }
 
-int fcMP4Context::writeMemory(void *buf)
+int vsMP4Context::writeMemory(void *buf)
 {
     std::ostringstream os(std::ios::binary);
     write(os);
@@ -442,13 +441,10 @@ int fcMP4Context::writeMemory(void *buf)
 }
 
 
-vsCLinkage vsExport vsIEncodeContext* fcMP4CreateContextImpl(vsEncodeConfig &conf, IGraphicsDevice *dev)
+vsCLinkage vsExport vsIMP4EncodeContext* vsMP4EncodeCreateContextImpl(vsEncodeConfig &conf, IGraphicsDevice *dev)
 {
-    if (fcH264Encoder::loadModule()) {
-        return new fcMP4Context(conf, dev);
+    if (vsH264Encoder::loadModule()) {
+        return new vsMP4Context(conf, dev);
     }
     return nullptr;
 }
-
-
-#endif // fcSupportMP4

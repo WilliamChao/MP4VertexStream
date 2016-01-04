@@ -56,7 +56,7 @@ int main(int argc, char** argv)
     conf.audio_sampling_rate = SamplingRate;
     conf.audio_num_channels = 1;
     conf.audio_bitrate = 64000;
-    vsIEncodeContext *ctx = vsEncodeCreateContext(&conf);
+    vsEncodeContext *ctx = vsEncodeCreateContext(&conf);
 
     std::vector<RGBA> video_frame(Width * Height);
     std::vector<float> audio_sample(SamplingRate);

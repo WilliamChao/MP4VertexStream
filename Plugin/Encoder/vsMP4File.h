@@ -1,4 +1,4 @@
-﻿class vsIEncodeContext
+﻿class vsIMP4EncodeContext
 {
 public:
     virtual void release() = 0;
@@ -10,7 +10,7 @@ public:
     virtual int  writeMemory(void *buf) = 0;
 
 protected:
-    virtual ~vsIEncodeContext() {}
+    virtual ~vsIMP4EncodeContext() {}
 };
 
-typedef vsIEncodeContext* (*vsEncodeCreateContextImplT)(vsEncodeConfig &conf, IGraphicsDevice*);
+typedef vsIMP4EncodeContext* (*vsMP4EncodeCreateContextImplT)(vsEncodeConfig &conf, IGraphicsDevice*);

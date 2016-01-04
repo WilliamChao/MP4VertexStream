@@ -1,7 +1,7 @@
 ﻿#include "pch.h"
 #include "ThreadPool.h"
 
-#ifndef fcWithTBB
+#ifndef vsWithTBB
 
 class WorkerThread
 {
@@ -91,4 +91,4 @@ void TaskGroup::wait()
     }
 }
 
-#endif // fcWithTBB
+#endif // vsWithTBB

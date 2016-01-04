@@ -27,10 +27,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Encoder\fcAACEncoder.cpp" />
-    <ClCompile Include="Encoder\fcH264Encoder.cpp" />
-    <ClCompile Include="Encoder\fcMP4File.cpp" />
-    <ClCompile Include="Encoder\fcMP4Muxer.cpp" />
+    <ClCompile Include="Encoder\vsAACEncoder.cpp" />
+    <ClCompile Include="Encoder\vsH264Encoder.cpp" />
+    <ClCompile Include="Encoder\vsMP4File.cpp" />
+    <ClCompile Include="Encoder\vsMP4Muxer.cpp" />
     <ClCompile Include="Foundation\ThreadPool.cpp" />
     <ClCompile Include="GraphicsDevice\GraphicsDevice.cpp" />
     <ClCompile Include="GraphicsDevice\GraphicsDeviceD3D11.cpp" />
@@ -45,17 +45,21 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Master|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Master|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="vsDecodeContext.cpp" />
+    <ClCompile Include="vsEncodeContext.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Encoder\fcAACEncoder.h" />
-    <ClInclude Include="Encoder\fcH264Encoder.h" />
-    <ClInclude Include="Encoder\fcMP4File.h" />
-    <ClInclude Include="Encoder\fcMP4Muxer.h" />
+    <ClInclude Include="Encoder\vsAACEncoder.h" />
+    <ClInclude Include="Encoder\vsH264Encoder.h" />
+    <ClInclude Include="Encoder\vsMP4File.h" />
+    <ClInclude Include="Encoder\vsMP4Muxer.h" />
     <ClInclude Include="Foundation\Foundation.h" />
     <ClInclude Include="Foundation\ThreadPool.h" />
     <ClInclude Include="GraphicsDevice\GraphicsDevice.h" />
     <ClInclude Include="MP4VertexStream.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="vsDecodeContext.h" />
+    <ClInclude Include="vsEncodeContext.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{08361722-5520-47AC-A0C2-31E8A062B73F}</ProjectGuid>
@@ -138,7 +142,7 @@ $(SolutionDir)external\PatchLibrary\PatchLibraryProxy64.exe /target:Unity.exe /p
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <PreprocessorDefinitions>fcSupportMP4;fcSupportOpenGL;fcSupportD3D11;fcDebug;fcVerboseDebug;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>vsSupportOpenGL;vsSupportD3D11;fcDebug;fcVerboseDebug;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
@@ -174,7 +178,7 @@ $(SolutionDir)external\PatchLibrary\PatchLibraryProxy64.exe /target:Unity.exe /p
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalOptions>/Zo %(AdditionalOptions)</AdditionalOptions>
-      <PreprocessorDefinitions>fcSupportMP4;fcSupportOpenGL;fcSupportD3D11;fcDebug;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>vsSupportOpenGL;vsSupportD3D11;fcDebug;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
@@ -210,7 +214,7 @@ $(SolutionDir)external\PatchLibrary\PatchLibraryProxy64.exe /target:Unity.exe /p
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalOptions>/Zo %(AdditionalOptions)</AdditionalOptions>
-      <PreprocessorDefinitions>fcSupportMP4;fcSupportOpenGL;fcSupportD3D11;fcMaster;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>vsSupportOpenGL;vsSupportD3D11;fcMaster;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <Optimization>Full</Optimization>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>

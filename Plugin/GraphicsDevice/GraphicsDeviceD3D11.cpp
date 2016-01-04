@@ -1,7 +1,7 @@
 ﻿#include "pch.h"
 #include "MP4VertexStream.h"
 
-#ifdef fcSupportD3D11
+#ifdef vsSupportD3D11
 #include "Foundation.h"
 #include "GraphicsDevice.h"
 #include <d3d11.h>
@@ -193,4 +193,4 @@ bool GraphicsDeviceD3D11::writeTexture(void *o_tex, int width, int height, fcETe
     return true;
 }
 
-#endif // fcSupportD3D11
+#endif // vsSupportD3D11

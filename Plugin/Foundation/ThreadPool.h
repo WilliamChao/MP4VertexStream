@@ -1,7 +1,7 @@
 ﻿#ifndef ThreadPool_h
 #define ThreadPool_h
 
-#ifndef fcWithTBB
+#ifndef vsWithTBB
 
 #include <vector>
 #include <deque>
@@ -59,11 +59,11 @@ void TaskGroup::run(const F &f)
     });
 }
 
-#else // fcWithTBB
+#else // vsWithTBB
 
 #include <tbb/tbb.h>
 typedef tbb::task_group TaskGroup;
 
-#endif // fcWithTBB
+#endif // vsWithTBB
 
 #endif // ThreadPool_h

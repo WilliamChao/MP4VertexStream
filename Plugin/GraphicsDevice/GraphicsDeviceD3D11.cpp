@@ -2,17 +2,17 @@
 #include "MP4VertexStream.h"
 
 #ifdef fcSupportD3D11
-#include "fcFoundation.h"
-#include "fcGraphicsDevice.h"
+#include "Foundation.h"
+#include "GraphicsDevice.h"
 #include <d3d11.h>
 const int fcD3D11MaxStagingTextures = 32;
 
 
-class fcGraphicsDeviceD3D11 : public fcIGraphicsDevice
+class GraphicsDeviceD3D11 : public IGraphicsDevice
 {
 public:
-    fcGraphicsDeviceD3D11(void *device);
-    ~fcGraphicsDeviceD3D11();
+    GraphicsDeviceD3D11(void *device);
+    ~GraphicsDeviceD3D11();
     void* getDevicePtr() override;
     int getDeviceType() override;
     bool readTexture(void *o_buf, size_t bufsize, void *tex, int width, int height, fcETextureFormat format) override;
@@ -30,12 +30,12 @@ private:
 };
 
 
-fcIGraphicsDevice* fcCreateGraphicsDeviceD3D11(void *device)
+IGraphicsDevice* fcCreateGraphicsDeviceD3D11(void *device)
 {
-    return new fcGraphicsDeviceD3D11(device);
+    return new GraphicsDeviceD3D11(device);
 }
 
-fcGraphicsDeviceD3D11::fcGraphicsDeviceD3D11(void *device)
+GraphicsDeviceD3D11::GraphicsDeviceD3D11(void *device)
     : m_device((ID3D11Device*)device)
     , m_context(nullptr)
     , m_query_event(nullptr)
@@ -50,7 +50,7 @@ fcGraphicsDeviceD3D11::fcGraphicsDeviceD3D11(void *device)
     }
 }
 
-fcGraphicsDeviceD3D11::~fcGraphicsDeviceD3D11()
+GraphicsDeviceD3D11::~GraphicsDeviceD3D11()
 {
     if (m_context != nullptr)
     {
@@ -62,8 +62,8 @@ fcGraphicsDeviceD3D11::~fcGraphicsDeviceD3D11()
     }
 }
 
-void* fcGraphicsDeviceD3D11::getDevicePtr() { return m_device; }
-int fcGraphicsDeviceD3D11::getDeviceType() { return kGfxRendererD3D11; }
+void* GraphicsDeviceD3D11::getDevicePtr() { return m_device; }
+int GraphicsDeviceD3D11::getDeviceType() { return kGfxRendererD3D11; }
 
 
 static DXGI_FORMAT fcGetInternalFormatD3D11(fcETextureFormat fmt)
@@ -88,7 +88,7 @@ static DXGI_FORMAT fcGetInternalFormatD3D11(fcETextureFormat fmt)
 }
 
 
-ID3D11Texture2D* fcGraphicsDeviceD3D11::findOrCreateStagingTexture(int width, int height, fcETextureFormat format)
+ID3D11Texture2D* GraphicsDeviceD3D11::findOrCreateStagingTexture(int width, int height, fcETextureFormat format)
 {
     if (m_staging_textures.size() >= fcD3D11MaxStagingTextures) {
         clearStagingTextures();
@@ -105,7 +105,7 @@ ID3D11Texture2D* fcGraphicsDeviceD3D11::findOrCreateStagingTexture(int width, in
     }
 
     D3D11_TEXTURE2D_DESC desc = {
-        width, height, 1, 1, internal_format, { 1, 0 },
+        (UINT)width, (UINT)height, 1, 1, internal_format, { 1, 0 },
         D3D11_USAGE_STAGING, 0, D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE, 0
     };
     ID3D11Texture2D *ret = nullptr;
@@ -117,7 +117,7 @@ ID3D11Texture2D* fcGraphicsDeviceD3D11::findOrCreateStagingTexture(int width, in
     return ret;
 }
 
-void fcGraphicsDeviceD3D11::clearStagingTextures()
+void GraphicsDeviceD3D11::clearStagingTextures()
 {
     for (auto& pair : m_staging_textures)
     {
@@ -126,7 +126,7 @@ void fcGraphicsDeviceD3D11::clearStagingTextures()
     m_staging_textures.clear();
 }
 
-bool fcGraphicsDeviceD3D11::readTexture(void *o_buf, size_t bufsize, void *tex_, int width, int height, fcETextureFormat format)
+bool GraphicsDeviceD3D11::readTexture(void *o_buf, size_t bufsize, void *tex_, int width, int height, fcETextureFormat format)
 {
     if (m_context == nullptr || tex_ == nullptr) { return false; }
     int psize = fcGetPixelSize(format);
@@ -175,7 +175,7 @@ bool fcGraphicsDeviceD3D11::readTexture(void *o_buf, size_t bufsize, void *tex_,
     return false;
 }
 
-bool fcGraphicsDeviceD3D11::writeTexture(void *o_tex, int width, int height, fcETextureFormat format, const void *buf, size_t bufsize)
+bool GraphicsDeviceD3D11::writeTexture(void *o_tex, int width, int height, fcETextureFormat format, const void *buf, size_t bufsize)
 {
     int psize = fcGetPixelSize(format);
     int pitch = psize * width;

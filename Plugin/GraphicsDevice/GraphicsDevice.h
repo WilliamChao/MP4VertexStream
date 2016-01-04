@@ -27,13 +27,13 @@ enum GfxDeviceEventType {
 };
 
 
-class fcIGraphicsDevice
+class IGraphicsDevice
 {
 public:
-    virtual ~fcIGraphicsDevice() {}
+    virtual ~IGraphicsDevice() {}
     virtual void* getDevicePtr() = 0;
     virtual int getDeviceType() = 0;
     virtual bool readTexture(void *o_buf, size_t bufsize, void *tex, int width, int height, fcETextureFormat format) = 0;
     virtual bool writeTexture(void *o_tex, int width, int height, fcETextureFormat format, const void *buf, size_t bufsize) = 0;
 };
-vsCLinkage vsExport fcIGraphicsDevice* fcGetGraphicsDevice();
+vsCLinkage vsExport IGraphicsDevice* fcGetGraphicsDevice();

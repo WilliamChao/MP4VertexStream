@@ -2,8 +2,8 @@
 #include "MP4VertexStream.h"
 
 #ifdef fcSupportOpenGL
-#include "fcFoundation.h"
-#include "fcGraphicsDevice.h"
+#include "Foundation.h"
+#include "GraphicsDevice.h"
 
 #ifndef fcDontForceStaticGLEW
 #define GLEW_STATIC
@@ -16,11 +16,11 @@
 #endif
 
 
-class fcGraphicsDeviceOpenGL : public fcIGraphicsDevice
+class GraphicsDeviceOpenGL : public IGraphicsDevice
 {
 public:
-    fcGraphicsDeviceOpenGL(void *device);
-    ~fcGraphicsDeviceOpenGL();
+    GraphicsDeviceOpenGL(void *device);
+    ~GraphicsDeviceOpenGL();
     void* getDevicePtr() override;
     int getDeviceType() override;
     bool readTexture(void *o_buf, size_t bufsize, void *tex, int width, int height, fcETextureFormat format) override;
@@ -31,22 +31,22 @@ private:
 };
 
 
-fcIGraphicsDevice* fcCreateGraphicsDeviceOpenGL(void *device)
+IGraphicsDevice* fcCreateGraphicsDeviceOpenGL(void *device)
 {
-    return new fcGraphicsDeviceOpenGL(device);
+    return new GraphicsDeviceOpenGL(device);
 }
 
 
-void* fcGraphicsDeviceOpenGL::getDevicePtr() { return m_device; }
-int fcGraphicsDeviceOpenGL::getDeviceType() { return kGfxRendererOpenGL; }
+void* GraphicsDeviceOpenGL::getDevicePtr() { return m_device; }
+int GraphicsDeviceOpenGL::getDeviceType() { return kGfxRendererOpenGL; }
 
-fcGraphicsDeviceOpenGL::fcGraphicsDeviceOpenGL(void *device)
+GraphicsDeviceOpenGL::GraphicsDeviceOpenGL(void *device)
     : m_device(device)
 {
     glewInit();
 }
 
-fcGraphicsDeviceOpenGL::~fcGraphicsDeviceOpenGL()
+GraphicsDeviceOpenGL::~GraphicsDeviceOpenGL()
 {
 }
 
@@ -73,7 +73,7 @@ static void fcGetInternalFormatOpenGL(fcETextureFormat format, GLenum &o_fmt, GL
     }
 }
 
-bool fcGraphicsDeviceOpenGL::readTexture(void *o_buf, size_t, void *tex, int, int, fcETextureFormat format)
+bool GraphicsDeviceOpenGL::readTexture(void *o_buf, size_t, void *tex, int, int, fcETextureFormat format)
 {
     GLenum internal_format = 0;
     GLenum internal_type = 0;
@@ -89,7 +89,7 @@ bool fcGraphicsDeviceOpenGL::readTexture(void *o_buf, size_t, void *tex, int, in
     return true;
 }
 
-bool fcGraphicsDeviceOpenGL::writeTexture(void *o_tex, int width, int height, fcETextureFormat format, const void *buf, size_t)
+bool GraphicsDeviceOpenGL::writeTexture(void *o_tex, int width, int height, fcETextureFormat format, const void *buf, size_t)
 {
     GLenum internal_format = 0;
     GLenum internal_type = 0;

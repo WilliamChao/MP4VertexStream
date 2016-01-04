@@ -1,7 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="fcThreadPool.cpp" />
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="Encoder\fcH264Encoder.cpp">
       <Filter>Encoder</Filter>
@@ -15,24 +14,25 @@
     <ClCompile Include="Encoder\fcAACEncoder.cpp">
       <Filter>Encoder</Filter>
     </ClCompile>
-    <ClCompile Include="GraphicsDevice\fcGraphicsDeviceD3D9.cpp">
-      <Filter>GraphicsDevice</Filter>
-    </ClCompile>
-    <ClCompile Include="GraphicsDevice\fcGraphicsDeviceD3D11.cpp">
-      <Filter>GraphicsDevice</Filter>
-    </ClCompile>
-    <ClCompile Include="GraphicsDevice\fcGraphicsDeviceOpenGL.cpp">
-      <Filter>GraphicsDevice</Filter>
-    </ClCompile>
-    <ClCompile Include="GraphicsDevice\fcGraphicsDevice.cpp">
-      <Filter>GraphicsDevice</Filter>
-    </ClCompile>
     <ClCompile Include="MP4VertexStream.cpp" />
+    <ClCompile Include="Foundation\ThreadPool.cpp">
+      <Filter>Foundation</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsDevice\GraphicsDeviceD3D11.cpp">
+      <Filter>GraphicsDevice</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsDevice\GraphicsDeviceOpenGL.cpp">
+      <Filter>GraphicsDevice</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsDevice\GraphicsDevice.cpp">
+      <Filter>GraphicsDevice</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsDevice\GraphicsDeviceD3D9.cpp">
+      <Filter>GraphicsDevice</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="fcThreadPool.h" />
     <ClInclude Include="pch.h" />
-    <ClInclude Include="fcFoundation.h" />
     <ClInclude Include="Encoder\fcH264Encoder.h">
       <Filter>Encoder</Filter>
     </ClInclude>
@@ -45,10 +45,16 @@
     <ClInclude Include="Encoder\fcAACEncoder.h">
       <Filter>Encoder</Filter>
     </ClInclude>
-    <ClInclude Include="GraphicsDevice\fcGraphicsDevice.h">
+    <ClInclude Include="MP4VertexStream.h" />
+    <ClInclude Include="Foundation\ThreadPool.h">
+      <Filter>Foundation</Filter>
+    </ClInclude>
+    <ClInclude Include="Foundation\Foundation.h">
+      <Filter>Foundation</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsDevice\GraphicsDevice.h">
       <Filter>GraphicsDevice</Filter>
     </ClInclude>
-    <ClInclude Include="MP4VertexStream.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Encoder">
@@ -56,6 +62,9 @@
     </Filter>
     <Filter Include="GraphicsDevice">
       <UniqueIdentifier>{0c2020a7-0595-4238-aea3-e674b7c56e7e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Foundation">
+      <UniqueIdentifier>{2058aa7e-4bef-4f7b-a683-323200204275}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

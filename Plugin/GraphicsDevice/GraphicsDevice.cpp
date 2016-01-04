@@ -1,18 +1,18 @@
 ﻿#include "pch.h"
 #include "MP4VertexStream.h"
-#include "../fcFoundation.h"
-#include "fcGraphicsDevice.h"
+#include "Foundation.h"
+#include "GraphicsDevice.h"
 
 
 
-fcIGraphicsDevice* fcCreateGraphicsDeviceOpenGL(void *device);
-fcIGraphicsDevice* fcCreateGraphicsDeviceD3D9(void *device);
-fcIGraphicsDevice* fcCreateGraphicsDeviceD3D11(void *device);
+IGraphicsDevice* fcCreateGraphicsDeviceOpenGL(void *device);
+IGraphicsDevice* fcCreateGraphicsDeviceD3D9(void *device);
+IGraphicsDevice* fcCreateGraphicsDeviceD3D11(void *device);
 
 
-fcIGraphicsDevice *g_the_graphics_device;
-vsCLinkage vsExport fcIGraphicsDevice* fcGetGraphicsDevice() { return g_the_graphics_device; }
-typedef fcIGraphicsDevice* (*fcGetGraphicsDeviceT)();
+IGraphicsDevice *g_the_graphics_device;
+vsCLinkage vsExport IGraphicsDevice* fcGetGraphicsDevice() { return g_the_graphics_device; }
+typedef IGraphicsDevice* (*fcGetGraphicsDeviceT)();
 
 
 vsCLinkage vsExport void UnitySetGraphicsDevice(void* device, int deviceType, int eventType)
@@ -89,7 +89,7 @@ BOOL WINAPI DllMain(HINSTANCE module_handle, DWORD reason_for_call, LPVOID reser
         if (m) {
             auto proc = (fcGetGraphicsDeviceT)::GetProcAddress(m, "fcGetGraphicsDevice");
             if (proc) {
-                fcIGraphicsDevice *dev = proc();
+                IGraphicsDevice *dev = proc();
                 if (dev) {
                     UnitySetGraphicsDevice(dev->getDevicePtr(), dev->getDeviceType(), kGfxDeviceEventInitialize);
                 }

@@ -1,13 +1,13 @@
 ﻿#include "pch.h"
 #include "MP4VertexStream.h"
-#include "fcFoundation.h"
-#include "GraphicsDevice/fcGraphicsDevice.h"
+#include "Foundation.h"
+#include "GraphicsDevice/GraphicsDevice.h"
 
 
 
 #include "Encoder/fcMP4File.h"
 
-vsCLinkage vsExport vsIEncodeContext* fcMP4CreateContextImpl(vsEncodeConfig &conf, fcIGraphicsDevice *dev);
+vsCLinkage vsExport vsIEncodeContext* fcMP4CreateContextImpl(vsEncodeConfig &conf, IGraphicsDevice *dev);
 
 
 vsCLinkage vsExport vsIEncodeContext* vsEncodeCreateContext(vsEncodeConfig *conf)

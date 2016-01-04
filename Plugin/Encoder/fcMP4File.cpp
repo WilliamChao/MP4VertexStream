@@ -3,9 +3,9 @@
 
 #ifdef fcSupportMP4
 #include <libyuv/libyuv.h>
-#include "fcFoundation.h"
-#include "fcThreadPool.h"
-#include "GraphicsDevice/fcGraphicsDevice.h"
+#include "Foundation.h"
+#include "ThreadPool.h"
+#include "GraphicsDevice/GraphicsDevice.h"
 #include "fcMP4File.h"
 #include "fcH264Encoder.h"
 #include "fcAACEncoder.h"
@@ -54,7 +54,7 @@ public:
     };
 
 public:
-    fcMP4Context(vsEncodeConfig &conf, fcIGraphicsDevice *dev);
+    fcMP4Context(vsEncodeConfig &conf, IGraphicsDevice *dev);
     ~fcMP4Context();
     void release() override;
 
@@ -79,7 +79,7 @@ private:
 
 private:
     vsEncodeConfig m_conf;
-    fcIGraphicsDevice *m_dev;
+    IGraphicsDevice *m_dev;
     std::vector<RawFrameData> m_raw_video_buffers;
     std::vector<std::vector<float>> m_raw_audio_buffers;
     std::list<H264FrameData> m_h264_buffers;
@@ -107,7 +107,7 @@ private:
 };
 
 
-fcMP4Context::fcMP4Context(vsEncodeConfig &conf, fcIGraphicsDevice *dev)
+fcMP4Context::fcMP4Context(vsEncodeConfig &conf, IGraphicsDevice *dev)
     : m_conf(conf)
     , m_dev(dev)
     , m_video_frame(0)
@@ -442,7 +442,7 @@ int fcMP4Context::writeMemory(void *buf)
 }
 
 
-vsCLinkage vsExport vsIEncodeContext* fcMP4CreateContextImpl(vsEncodeConfig &conf, fcIGraphicsDevice *dev)
+vsCLinkage vsExport vsIEncodeContext* fcMP4CreateContextImpl(vsEncodeConfig &conf, IGraphicsDevice *dev)
 {
     if (fcH264Encoder::loadModule()) {
         return new fcMP4Context(conf, dev);

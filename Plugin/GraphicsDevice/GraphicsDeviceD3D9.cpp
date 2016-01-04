@@ -2,16 +2,16 @@
 #include "MP4VertexStream.h"
 
 #ifdef fcSupportD3D9
-#include "fcFoundation.h"
-#include "fcGraphicsDevice.h"
+#include "Foundation.h"
+#include "GraphicsDevice.h"
 #include <d3d9.h>
 const int fcD3D9MaxStagingTextures = 32;
 
-class fcGraphicsDeviceD3D9 : public fcIGraphicsDevice
+class GraphicsDeviceD3D9 : public IGraphicsDevice
 {
 public:
-    fcGraphicsDeviceD3D9(void *device);
-    ~fcGraphicsDeviceD3D9();
+    GraphicsDeviceD3D9(void *device);
+    ~GraphicsDeviceD3D9();
     void* getDevicePtr() override;
     int getDeviceType() override;
     bool readTexture(void *o_buf, size_t bufsize, void *tex, int width, int height, fcETextureFormat format) override;
@@ -27,27 +27,27 @@ private:
 };
 
 
-fcIGraphicsDevice* fcCreateGraphicsDeviceD3D9(void *device)
+IGraphicsDevice* fcCreateGraphicsDeviceD3D9(void *device)
 {
-    return new fcGraphicsDeviceD3D9(device);
+    return new GraphicsDeviceD3D9(device);
 }
 
 
-fcGraphicsDeviceD3D9::fcGraphicsDeviceD3D9(void *device)
+GraphicsDeviceD3D9::GraphicsDeviceD3D9(void *device)
     : m_device((IDirect3DDevice9*)device)
 {
 }
 
-fcGraphicsDeviceD3D9::~fcGraphicsDeviceD3D9()
+GraphicsDeviceD3D9::~GraphicsDeviceD3D9()
 {
     clearStagingTextures();
 }
 
-void* fcGraphicsDeviceD3D9::getDevicePtr() { return m_device; }
-int fcGraphicsDeviceD3D9::getDeviceType() { return kGfxRendererD3D9; }
+void* GraphicsDeviceD3D9::getDevicePtr() { return m_device; }
+int GraphicsDeviceD3D9::getDeviceType() { return kGfxRendererD3D9; }
 
 
-void fcGraphicsDeviceD3D9::clearStagingTextures()
+void GraphicsDeviceD3D9::clearStagingTextures()
 {
     for (auto& pair : m_staging_textures)
     {
@@ -75,7 +75,7 @@ static D3DFORMAT fcGetInternalFormatD3D9(fcETextureFormat fmt)
     return D3DFMT_UNKNOWN;
 }
 
-IDirect3DSurface9* fcGraphicsDeviceD3D9::findOrCreateStagingTexture(int width, int height, fcETextureFormat format)
+IDirect3DSurface9* GraphicsDeviceD3D9::findOrCreateStagingTexture(int width, int height, fcETextureFormat format)
 {
     if (m_staging_textures.size() >= fcD3D9MaxStagingTextures) {
         clearStagingTextures();
@@ -130,7 +130,7 @@ inline void copy_with_BGRA_RGBA_conversion(RGBA<T> *dst, const RGBA<T> *src, int
     }
 }
 
-bool fcGraphicsDeviceD3D9::readTexture(void *o_buf, size_t bufsize, void *tex_, int width, int height, fcETextureFormat format)
+bool GraphicsDeviceD3D9::readTexture(void *o_buf, size_t bufsize, void *tex_, int width, int height, fcETextureFormat format)
 {
     HRESULT hr;
     IDirect3DTexture9 *tex = (IDirect3DTexture9*)tex_;
@@ -186,7 +186,7 @@ bool fcGraphicsDeviceD3D9::readTexture(void *o_buf, size_t bufsize, void *tex_, 
     return ret;
 }
 
-bool fcGraphicsDeviceD3D9::writeTexture(void *o_tex, int width, int height, fcETextureFormat format, const void *buf, size_t bufsize)
+bool GraphicsDeviceD3D9::writeTexture(void *o_tex, int width, int height, fcETextureFormat format, const void *buf, size_t bufsize)
 {
     int psize = fcGetPixelSize(format);
     int pitch = psize * width;

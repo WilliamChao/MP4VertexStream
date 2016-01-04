@@ -2,7 +2,7 @@
 #include <fstream>
 #include "lsmash/lsmash.h"
 #include "lsmash/importer.h"
-#include "fcFoundation.h"
+#include "Foundation.h"
 #include "fcMP4Muxer.h"
 
 

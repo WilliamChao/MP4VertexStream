@@ -52,7 +52,7 @@
 
 
 
-class fcIGraphicsDevice;
+class IGraphicsDevice;
 class vsIEncodeContext;
 class vsIDecodeContext;
 

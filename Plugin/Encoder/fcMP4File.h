@@ -13,4 +13,4 @@ protected:
     virtual ~vsIEncodeContext() {}
 };
 
-typedef vsIEncodeContext* (*vsEncodeCreateContextImplT)(vsEncodeConfig &conf, fcIGraphicsDevice*);
+typedef vsIEncodeContext* (*vsEncodeCreateContextImplT)(vsEncodeConfig &conf, IGraphicsDevice*);

@@ -1,7 +1,7 @@
 ﻿#include "pch.h"
 #include <openh264/codec_api.h>
 #include <libyuv/libyuv.h>
-#include "fcFoundation.h"
+#include "Foundation.h"
 #include "fcH264Encoder.h"
 
 

@@ -15,7 +15,7 @@
 #endif
 
 
-class fcMP4Context : public fcIMP4Context
+class fcMP4Context : public vsIEncodeContext
 {
 public:
     struct H264FrameData
@@ -54,21 +54,15 @@ public:
     };
 
 public:
-    fcMP4Context(fcMP4Config &conf, fcIGraphicsDevice *dev);
+    fcMP4Context(vsEncodeConfig &conf, fcIGraphicsDevice *dev);
     ~fcMP4Context();
     void release() override;
 
-    bool addVideoFrameTexture(void *tex) override;
-    bool addVideoFramePixels(void *pixels, fcEColorSpace cs) override;
+    bool addVideoSamples(void *pixels, vsColorSpace cs) override;
     bool addAudioSamples(const float *samples, int num_samples) override;
     void clearFrame() override;
-    bool writeFile(const char *path, int begin_frame, int end_frame) override;
-    int  writeMemory(void *buf, int begin_frame, int end_frame) override;
-
-    int getFrameCount() override;
-    void getFrameData(void *tex, int frame) override;
-    int getExpectedDataSize(int begin_frame, int end_frame) override;
-    void eraseFrame(int begin_frame, int end_frame) override;
+    bool writeFile(const char *path) override;
+    int  writeMemory(void *buf) override;
 
 private:
     void enqueueVideoTask(const std::function<void()> &f);
@@ -81,11 +75,10 @@ private:
     void wait();
     void waitOne();
     void addVideoFrameTask(H264FrameData &o_fdata, RawFrameData &raw_buffer, bool rgba2i420);
-    void write(std::ostream &os, int begin_frame, int end_frame);
+    void write(std::ostream &os);
 
 private:
-    fcEMagic m_magic; //  for debug
-    fcMP4Config m_conf;
+    vsEncodeConfig m_conf;
     fcIGraphicsDevice *m_dev;
     std::vector<RawFrameData> m_raw_video_buffers;
     std::vector<std::vector<float>> m_raw_audio_buffers;
@@ -114,9 +107,8 @@ private:
 };
 
 
-fcMP4Context::fcMP4Context(fcMP4Config &conf, fcIGraphicsDevice *dev)
-    : m_magic(fcE_MP4Context)
-    , m_conf(conf)
+fcMP4Context::fcMP4Context(vsEncodeConfig &conf, fcIGraphicsDevice *dev)
+    : m_conf(conf)
     , m_dev(dev)
     , m_video_frame(0)
     , m_audio_frame(0)
@@ -164,7 +156,6 @@ fcMP4Context::~fcMP4Context()
         m_audio_condition.notify_all();
         m_audio_worker.join();
     }
-    m_magic = fcE_Deleted;
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
 }
 
@@ -295,35 +286,7 @@ void fcMP4Context::waitOne()
     }
 }
 
-
-bool fcMP4Context::addVideoFrameTexture(void *tex)
-{
-    if (!m_h264_encoder) { return false; }
-    waitOne();
-    int frame = m_video_frame++;
-    RawFrameData& raw = m_raw_video_buffers[frame % m_conf.video_max_buffers];
-
-    // フレームバッファの内容取得
-    if (!m_dev->readTexture(&raw.rgba[0], raw.rgba.size(), tex, m_conf.video_width, m_conf.video_height, fcE_ARGB32))
-    {
-        --frame;
-        return false;
-    }
-
-    // h264 データを生成
-    m_h264_buffers.push_back(H264FrameData());
-    H264FrameData& fdata = m_h264_buffers.back();
-    ++m_video_active_task_count;
-    enqueueVideoTask([this, &fdata, &raw](){
-        addVideoFrameTask(fdata, raw, true);
-        --m_video_active_task_count;
-    });
-
-    scrape(true);
-    return true;
-}
-
-bool fcMP4Context::addVideoFramePixels(void *pixels, fcEColorSpace cs)
+bool fcMP4Context::addVideoSamples(void *pixels, vsColorSpace cs)
 {
     if (!m_h264_encoder) { return false; }
     waitOne();
@@ -331,10 +294,10 @@ bool fcMP4Context::addVideoFramePixels(void *pixels, fcEColorSpace cs)
     RawFrameData& raw = m_raw_video_buffers[frame % m_conf.video_max_buffers];
 
     bool rgba2i420 = true;
-    if (cs == fcE_RGBA) {
+    if (cs == vsColorSpace_RGBA) {
         raw.rgba.assign((char*)pixels, raw.rgba.size());
     }
-    else if (cs == fcE_I420) {
+    else if (cs == vsColorSpace_I420) {
         rgba2i420 = false;
 
         int frame_size = m_conf.video_width * m_conf.video_height;
@@ -405,7 +368,7 @@ static inline void adjust_frame(int &begin_frame, int &end_frame, int max_frame)
 }
 
 
-void fcMP4Context::write(std::ostream &os, int begin_frame, int end_frame)
+void fcMP4Context::write(std::ostream &os)
 {
     addAudioSamples(nullptr, 0); // flush
     wait();
@@ -427,11 +390,8 @@ void fcMP4Context::write(std::ostream &os, int begin_frame, int end_frame)
         params.in_h264_path = tmp_h264_filename;
         std::ofstream tmp_h264(tmp_h264_filename, std::ios::binary);
 
-        adjust_frame(begin_frame, end_frame, (int)m_h264_buffers.size());
         auto begin = m_h264_buffers.begin();
-        auto end = m_h264_buffers.begin();
-        std::advance(begin, begin_frame);
-        std::advance(end, end_frame);
+        auto end = m_h264_buffers.end();
         for (auto i = begin; i != end; ++i) {
             tmp_h264.write(&i->data[0], i->data.size());
         }
@@ -462,19 +422,19 @@ void fcMP4Context::write(std::ostream &os, int begin_frame, int end_frame)
 #endif // fcMaster
 }
 
-bool fcMP4Context::writeFile(const char *path, int begin_frame, int end_frame)
+bool fcMP4Context::writeFile(const char *path)
 {
     std::ofstream os(path, std::ios::binary);
     if (!os) { return false; }
-    write(os, begin_frame, end_frame);
+    write(os);
     os.close();
     return true;
 }
 
-int fcMP4Context::writeMemory(void *buf, int begin_frame, int end_frame)
+int fcMP4Context::writeMemory(void *buf)
 {
     std::ostringstream os(std::ios::binary);
-    write(os, begin_frame, end_frame);
+    write(os);
 
     std::string s = os.str();
     memcpy(buf, &s[0], s.size());
@@ -482,62 +442,7 @@ int fcMP4Context::writeMemory(void *buf, int begin_frame, int end_frame)
 }
 
 
-int fcMP4Context::getFrameCount()
-{
-    return m_h264_buffers.size();
-}
-
-void fcMP4Context::getFrameData(void *tex, int frame)
-{
-    if (frame >= m_h264_buffers.size()) { return; }
-    wait();
-    scrape(false);
-
-    H264FrameData *fdata = nullptr;
-    {
-        auto it = m_h264_buffers.begin();
-        std::advance(it, frame);
-        fdata = &(*it);
-    }
-
-    RawFrameData raw;
-    raw.allocate(m_conf.video_width, m_conf.video_height);
-    // todo: decode
-    m_dev->writeTexture(tex, m_conf.video_width, m_conf.video_height, fcE_ARGB32, &raw.rgba[0], raw.rgba.size());
-}
-
-
-int fcMP4Context::getExpectedDataSize(int begin_frame, int end_frame)
-{
-    adjust_frame(begin_frame, end_frame, (int)m_h264_buffers.size());
-    auto begin = m_h264_buffers.begin();
-    auto end = m_h264_buffers.begin();
-    std::advance(begin, begin_frame);
-    std::advance(end, end_frame);
-
-    size_t size = 2048; // mp4 metadata
-    for (auto i = begin; i != end; ++i) {
-        size += i->data.size();
-    }
-    return (int)size;
-}
-
-void fcMP4Context::eraseFrame(int begin_frame, int end_frame)
-{
-    wait();
-    scrape(false);
-
-    adjust_frame(begin_frame, end_frame, (int)m_h264_buffers.size());
-    auto begin = m_h264_buffers.begin();
-    auto end = m_h264_buffers.begin();
-    std::advance(begin, begin_frame);
-    std::advance(end, end_frame);
-    m_h264_buffers.erase(begin, end);
-    // todo: remake IDR frame if needed
-}
-
-
-fcCLinkage fcExport fcIMP4Context* fcMP4CreateContextImpl(fcMP4Config &conf, fcIGraphicsDevice *dev)
+vsCLinkage vsExport vsIEncodeContext* fcMP4CreateContextImpl(vsEncodeConfig &conf, fcIGraphicsDevice *dev)
 {
     if (fcH264Encoder::loadModule()) {
         return new fcMP4Context(conf, dev);

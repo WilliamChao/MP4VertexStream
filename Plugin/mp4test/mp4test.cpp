@@ -46,7 +46,7 @@ void CreateTestAudioData(float *samples, int num_samples, int scroll)
 
 int main(int argc, char** argv)
 {
-    fcMP4Config conf;
+    vsEncodeConfig conf;
     conf.video = true;
     conf.video_width = Width;
     conf.video_height = Height;
@@ -56,20 +56,18 @@ int main(int argc, char** argv)
     conf.audio_sampling_rate = SamplingRate;
     conf.audio_num_channels = 1;
     conf.audio_bitrate = 64000;
-    fcIMP4Context *ctx = fcMP4CreateContext(&conf);
+    vsIEncodeContext *ctx = vsEncodeCreateContext(&conf);
 
     std::vector<RGBA> video_frame(Width * Height);
     std::vector<float> audio_sample(SamplingRate);
     for (int i = 0; i < 300; ++i) {
         CreateTestVideoData(&video_frame[0], Width, Height, i);
-        fcMP4AddVideoFramePixels(ctx, &video_frame[0]);
+        vsEncodeBeginFrame(ctx);
+        vsEncodeAddData(ctx, &video_frame[0]);
+        vsEncodeEndFrame(ctx);
     }
-    for (int i = 0; i < 600; ++i) {
-        CreateTestAudioData(&audio_sample[0], audio_sample.size(), 0);
-        fcMP4AddAudioSamples(ctx, &audio_sample[0], audio_sample.size());
-    }
-    fcMP4WriteFile(ctx, "out.mp4", 0, -1);
+    vsEncodeWriteFile(ctx, "out.mp4");
 
-    fcMP4DestroyContext(ctx);
+    vsEncodeDestroyContext(ctx);
 }
 

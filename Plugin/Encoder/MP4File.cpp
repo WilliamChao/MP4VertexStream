@@ -14,7 +14,7 @@
 #endif
 
 
-class vsMP4Context : public IMP4EncodeContext
+class MP4Context : public IMP4EncodeContext
 {
 public:
     struct H264FrameData
@@ -53,8 +53,8 @@ public:
     };
 
 public:
-    vsMP4Context(vsEncodeConfig &conf, IGraphicsDevice *dev);
-    ~vsMP4Context();
+    MP4Context(const vsEncodeConfig &conf);
+    ~MP4Context();
     void release() override;
 
     bool addVideoSamples(void *pixels, vsColorSpace cs) override;
@@ -78,7 +78,6 @@ private:
 
 private:
     vsEncodeConfig m_conf;
-    IGraphicsDevice *m_dev;
     std::vector<RawFrameData> m_raw_video_buffers;
     std::vector<std::vector<float>> m_raw_audio_buffers;
     std::list<H264FrameData> m_h264_buffers;
@@ -106,9 +105,8 @@ private:
 };
 
 
-vsMP4Context::vsMP4Context(vsEncodeConfig &conf, IGraphicsDevice *dev)
+MP4Context::MP4Context(const vsEncodeConfig &conf)
     : m_conf(conf)
-    , m_dev(dev)
     , m_video_frame(0)
     , m_audio_frame(0)
     , m_video_active_task_count(0)
@@ -143,7 +141,7 @@ vsMP4Context::vsMP4Context(vsEncodeConfig &conf, IGraphicsDevice *dev)
     }
 }
 
-vsMP4Context::~vsMP4Context()
+MP4Context::~MP4Context()
 {
     // stop working thread
     m_stop = true;
@@ -158,7 +156,7 @@ vsMP4Context::~vsMP4Context()
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
 }
 
-void vsMP4Context::resetEncoders()
+void MP4Context::resetEncoders()
 {
     wait();
 
@@ -173,7 +171,7 @@ void vsMP4Context::resetEncoders()
     }
 }
 
-void vsMP4Context::enqueueVideoTask(const std::function<void()> &f)
+void MP4Context::enqueueVideoTask(const std::function<void()> &f)
 {
     {
         std::unique_lock<std::mutex> lock(m_video_queue_mutex);
@@ -182,7 +180,7 @@ void vsMP4Context::enqueueVideoTask(const std::function<void()> &f)
     m_video_condition.notify_one();
 }
 
-void vsMP4Context::enqueueAudioTask(const std::function<void()> &f)
+void MP4Context::enqueueAudioTask(const std::function<void()> &f)
 {
     {
         std::unique_lock<std::mutex> lock(m_audio_queue_mutex);
@@ -191,7 +189,7 @@ void vsMP4Context::enqueueAudioTask(const std::function<void()> &f)
     m_audio_condition.notify_one();
 }
 
-void vsMP4Context::processVideoTasks()
+void MP4Context::processVideoTasks()
 {
     while (!m_stop)
     {
@@ -210,7 +208,7 @@ void vsMP4Context::processVideoTasks()
     }
 }
 
-void vsMP4Context::processAudioTasks()
+void MP4Context::processAudioTasks()
 {
     while (!m_stop)
     {
@@ -230,12 +228,12 @@ void vsMP4Context::processAudioTasks()
 }
 
 
-void vsMP4Context::release()
+void MP4Context::release()
 {
     delete this;
 }
 
-void vsMP4Context::scrape(bool updating)
+void MP4Context::scrape(bool updating)
 {
     // 最大容量か最大フレーム数が設定されている場合、それらを超過したフレームをここで切り捨てる。
     // 切り捨てるフレームがパレットを持っている場合パレットの移動も行う。
@@ -246,7 +244,7 @@ void vsMP4Context::scrape(bool updating)
     // todo
 }
 
-void vsMP4Context::addVideoFrameTask(H264FrameData &o_fdata, RawFrameData &raw, bool rgba2i420)
+void MP4Context::addVideoFrameTask(H264FrameData &o_fdata, RawFrameData &raw, bool rgba2i420)
 {
     // 必要であれば RGBA -> I420 変換
     int width = m_conf.video_width;
@@ -268,7 +266,7 @@ void vsMP4Context::addVideoFrameTask(H264FrameData &o_fdata, RawFrameData &raw, 
     o_fdata.data.assign((char*)ret.data, ret.size);
 }
 
-void vsMP4Context::wait()
+void MP4Context::wait()
 {
     while (m_video_active_task_count > 0)
     {
@@ -276,7 +274,7 @@ void vsMP4Context::wait()
     }
 }
 
-void vsMP4Context::waitOne()
+void MP4Context::waitOne()
 {
     // 実行中のタスクの数が上限に達している場合適当に待つ
     while (m_video_active_task_count >= m_conf.video_max_buffers)
@@ -285,7 +283,7 @@ void vsMP4Context::waitOne()
     }
 }
 
-bool vsMP4Context::addVideoSamples(void *pixels, vsColorSpace cs)
+bool MP4Context::addVideoSamples(void *pixels, vsColorSpace cs)
 {
     if (!m_h264_encoder) { return false; }
     waitOne();
@@ -321,7 +319,7 @@ bool vsMP4Context::addVideoSamples(void *pixels, vsColorSpace cs)
     return true;
 }
 
-bool vsMP4Context::addAudioSamples(const float *samples, int num_samples)
+bool MP4Context::addAudioSamples(const float *samples, int num_samples)
 {
     if (!m_aac_encoder) { return false; }
     waitOne();
@@ -344,7 +342,7 @@ bool vsMP4Context::addAudioSamples(const float *samples, int num_samples)
     return true;
 }
 
-void vsMP4Context::clearFrame()
+void MP4Context::clearFrame()
 {
     wait();
     m_video_frame = 0;
@@ -367,7 +365,7 @@ static inline void adjust_frame(int &begin_frame, int &end_frame, int max_frame)
 }
 
 
-void vsMP4Context::write(std::ostream &os)
+void MP4Context::write(std::ostream &os)
 {
     addAudioSamples(nullptr, 0); // flush
     wait();
@@ -421,7 +419,7 @@ void vsMP4Context::write(std::ostream &os)
 #endif // fcMaster
 }
 
-bool vsMP4Context::writeFile(const char *path)
+bool MP4Context::writeFile(const char *path)
 {
     std::ofstream os(path, std::ios::binary);
     if (!os) { return false; }
@@ -430,7 +428,7 @@ bool vsMP4Context::writeFile(const char *path)
     return true;
 }
 
-int vsMP4Context::writeMemory(void *buf)
+int MP4Context::writeMemory(void *buf)
 {
     std::ostringstream os(std::ios::binary);
     write(os);
@@ -441,10 +439,10 @@ int vsMP4Context::writeMemory(void *buf)
 }
 
 
-vsCLinkage vsExport IMP4EncodeContext* vsMP4EncodeCreateContextImpl(vsEncodeConfig &conf, IGraphicsDevice *dev)
+IMP4EncodeContext* vsMP4EncodeCreateContext(const vsEncodeConfig &conf)
 {
     if (H264Encoder::loadModule()) {
-        return new vsMP4Context(conf, dev);
+        return new MP4Context(conf);
     }
     return nullptr;
 }

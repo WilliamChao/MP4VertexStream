@@ -9,18 +9,16 @@
 
 #include "Encoder/MP4File.h"
 
-vsCLinkage vsExport vsEncodeContext* vsMP4EncodeCreateContextImpl(vsEncodeConfig &conf, IGraphicsDevice *dev);
-
 
 vsCLinkage vsExport vsEncodeContext* vsEncodeCreateContext(vsEncodeConfig *conf)
 {
-    return vsMP4EncodeCreateContextImpl(*conf, fcGetGraphicsDevice());
+    return new vsEncodeContext(*conf);
 }
 
 vsCLinkage vsExport void vsEncodeDestroyContext(vsEncodeContext *ctx)
 {
     if (!ctx) { return; }
-    ctx->release();
+    delete ctx;
 }
 
 vsCLinkage vsExport void vsEncodeBeginFrame(vsEncodeContext *ctx)

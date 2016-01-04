@@ -13,4 +13,4 @@ protected:
     virtual ~IMP4EncodeContext() {}
 };
 
-typedef IMP4EncodeContext* (*vsMP4EncodeCreateContextImplT)(vsEncodeConfig &conf, IGraphicsDevice*);
+IMP4EncodeContext* vsMP4EncodeCreateContext(const vsEncodeConfig &conf);

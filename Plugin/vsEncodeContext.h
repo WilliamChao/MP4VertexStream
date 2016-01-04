@@ -8,11 +8,7 @@ class vsEncodeContext
 {
 public:
     vsEncodeContext(const vsEncodeConfig& config);
-protected:
     ~vsEncodeContext();
-
-public:
-    void release();
 
     void beginFrame();
     void addData(const void *data, int num_elements, vsDataFormat format);

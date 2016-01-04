@@ -52,10 +52,10 @@ int main(int argc, char** argv)
     conf.video_height = Height;
     conf.video_bitrate = 256000;
     conf.video_framerate = 30;
-    conf.audio = true;
-    conf.audio_sampling_rate = SamplingRate;
-    conf.audio_num_channels = 1;
-    conf.audio_bitrate = 64000;
+    //conf.audio = true;
+    //conf.audio_sampling_rate = SamplingRate;
+    //conf.audio_num_channels = 1;
+    //conf.audio_bitrate = 64000;
     vsEncodeContext *ctx = vsEncodeCreateContext(&conf);
 
     std::vector<RGBA> video_frame(Width * Height);
